@@ -2,22 +2,25 @@ pipeline {
     agent any
     
     environment {
-        // Configuración de registro
+        // Configuración de registro[cite: 1]
         REGISTRY = 'ghcr.io'
-        // Nombre de la imagen (formato: usuario/repo en minúsculas)
+        // Nombre de la imagen (formato: usuario/repo en minúsculas)[cite: 1]
         IMAGE_NAME = 'a-bpooks/jenkins-pipeline-practica'
         
-        // Variables de versión
+        // Variables de versión[cite: 1]
         COMMIT_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         BUILD_TIMESTAMP = sh(script: 'date +%Y%m%d-%H%M%S', returnStdout: true).trim()
         
-        // Tags de la imagen
+        // Tags de la imagen[cite: 1]
         IMAGE_TAG_LATEST = "${REGISTRY}/${IMAGE_NAME}:latest"
         IMAGE_TAG_COMMIT = "${REGISTRY}/${IMAGE_NAME}:${COMMIT_SHA}"
         IMAGE_TAG_BUILD = "${REGISTRY}/${IMAGE_NAME}:build-${BUILD_TIMESTAMP}"
     }
     
     stages {
+        // ============================================
+        // STAGE 1: Preparación[cite: 1]
+        // ============================================
         stage('Prepare') {
             steps {
                 echo ' Preparando entorno...'
@@ -27,6 +30,9 @@ pipeline {
             }
         }
         
+        // ============================================
+        // STAGE 2: Instalación de Dependencias[cite: 1]
+        // ============================================
         stage('Install Dependencies') {
             steps {
                 echo '📥 Instalando dependencias...'
@@ -34,6 +40,9 @@ pipeline {
             }
         }
         
+        // ============================================
+        // STAGE 3: Ejecutar Tests[cite: 1]
+        // ============================================
         stage('Test') {
             steps {
                 echo '🧪 Ejecutando tests...'
@@ -41,6 +50,9 @@ pipeline {
             }
         }
         
+        // ============================================
+        // STAGE 4: Construcción de Imagen Docker[cite: 1]
+        // ============================================
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Construyendo imagen Docker...'
@@ -50,10 +62,10 @@ pipeline {
             }
         }
         
+        // ============================================
+        // STAGE 5: Publicación en Registro[cite: 1]
+        // ============================================
         stage('Push to Registry') {
-            when {
-                branch 'main'
-            }
             steps {
                 echo '📤 Publicando imagen en GitHub Container Registry...'
                 withCredentials([
@@ -72,10 +84,10 @@ pipeline {
             }
         }
         
+        // ============================================
+        // STAGE 6: Verificación[cite: 1]
+        // ============================================
         stage('Verify Published Image') {
-            when {
-                branch 'main'
-            }
             steps {
                 echo '✅ Verificando imagen publicada...'
                 script {
@@ -91,10 +103,14 @@ pipeline {
         }
     }
     
+    // ============================================
+    // POST: Acciones finales[cite: 1]
+    // ============================================
     post {
         cleanup {
             echo '🧹 Limpiando recursos...'
             script {
+                // Limpiar imágenes locales para ahorrar espacio[cite: 1]
                 sh "docker image prune -f"
             }
         }
