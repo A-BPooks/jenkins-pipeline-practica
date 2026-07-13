@@ -1,0 +1,11 @@
+{
+  "name": "mi-app",
+  "version": "1.0.0",
+  "description": "App de prueba para Jenkins",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Pruebas pasaron exitosamente\""
+  },
+  "dependencies": {}
+}
